@@ -1,8 +1,5 @@
-/**
- * Instrument Blackbox: a dark precision-engineering portfolio with a telemetry rail,
- * asymmetric information panels, and restrained technical motion.
- */
-import { useEffect, useMemo, useState } from "react";
+
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   Activity,
   ArrowDown,
@@ -30,12 +27,12 @@ import {
   X,
 } from "lucide-react";
 
-const logoUrl = "/manus-storage/raihan-rune-logo_f8ee178c.png";
+const logoUrl = "/images/raihan-rune-logo.png";
 const assetUrls = {
-  hero: "/manus-storage/raihan-hero-instrument_34fb9011.jpg",
-  aeroview: "/manus-storage/raihan-project-aeroview_39257e79.jpg",
-  snowmed: "/manus-storage/raihan-project-snowmed_f87834fe.jpg",
-  scada: "/manus-storage/raihan-project-scada_97f9ced7.jpg",
+  hero: "/images/raihan-hero-instrument.jpg",
+  aeroview: "/images/raihan-project-aeroview.jpg",
+  snowmed: "/images/raihan-project-snowmed.jpg",
+  scada: "/images/raihan-project-scada.jpg",
 };
 
 const navigation = [
@@ -65,8 +62,8 @@ const technologyClusters = [
 const experiences = [
   {
     period: "NOW",
-    company: "Freelance / AI Training",
-    role: "AI Trainer",
+    company: "Medor.id",
+    role: "AI Automation Engineer",
     focus: "AI evaluation · multilingual AI · model evaluation",
     description: "Evaluating model behavior, task quality, and multilingual data to help intelligent systems become more useful and reliable.",
     tags: ["AI EVALUATION", "ANNOTATION", "PROMPT QA"],
@@ -74,7 +71,7 @@ const experiences = [
   {
     period: "2024",
     company: "PLN Icon Plus",
-    role: "Technical Support Engineer",
+    role: "Junior Software Engineer",
     focus: "SCADA / industrial monitoring",
     description: "Supported real-time monitoring and control systems, communication protocols, and infrastructure for power-distribution observability.",
     tags: ["MQTT", "MODBUS", "IEC 61850", "GRAFANA", "DOCKER"],
@@ -190,6 +187,9 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeTerminal, setActiveTerminal] = useState<TerminalKey>("about");
+  const [runtimeCommand, setRuntimeCommand] = useState("whoami");
+  const [runtimeBooted, setRuntimeBooted] = useState(false);
+  const [runtimeResponse, setRuntimeResponse] = useState("Software Engineer");
   const output = useMemo(() => terminalStates[activeTerminal], [activeTerminal]);
 
   useEffect(() => {
@@ -199,14 +199,32 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setRuntimeBooted(true), 900);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
+
+  const runRuntimeCommand = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const command = runtimeCommand.trim().toLowerCase();
+    const responses: Record<string, string> = {
+      whoami: "Software Engineer",
+      status: "AVAILABLE FOR WORK",
+      skills: "Full Stack / AI / Systems",
+      contact: "raihanrafi065@gmail.com",
+      help: "whoami · status · skills · contact",
+    };
+    setRuntimeResponse(responses[command] ?? `Command not found: ${command || "(empty)"}`);
+  };
 
   return (
     <div className="portfolio-shell">
       <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
         <a className="brand" href="#top" aria-label="Raihan home">
           <img src={logoUrl} alt="" />
-          <span>RAIHAN<span>//</span></span>
+          <span>Raihan Muhammad Rafi<span>//</span></span>
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {navigation.map(([label, href]) => <a href={href} key={href}>{label}</a>)}
@@ -240,10 +258,14 @@ export default function Home() {
             </div>
           </div>
           <div className="hero-runtime runtime-panel">
-            <div className="panel-topline"><span><i />LIVE RUNTIME</span><span>RAIHAN@SYS:~</span></div>
+            <div className="panel-topline"><span><i />LIVE RUNTIME</span><span>Raihan Muhammad Rafi</span></div>
             <div className="runtime-body">
-              <div className="command-line"><span className="terminal-prompt">$</span> whoami <span className="terminal-cursor" /></div>
-              <div className="runtime-response"><span>identity</span><b>Software Engineer</b></div>
+              <form className="command-line" onSubmit={runRuntimeCommand}>
+                <label className="terminal-prompt" htmlFor="runtime-command">$</label>
+                {runtimeBooted ? <input id="runtime-command" className="runtime-command-input" value={runtimeCommand} onChange={(event) => setRuntimeCommand(event.target.value)} aria-label="Runtime command" spellCheck={false} autoComplete="off" /> : <span className="runtime-typed-command" aria-label="whoami">{runtimeCommand.split("").map((character, index) => <span key={`${character}-${index}`} style={{ animationDelay: `${index * 85}ms` }}>{character}</span>)}</span>}
+                <span className="terminal-cursor" />
+              </form>
+              <div className="runtime-response runtime-boot-response" aria-live="polite"><span>output</span><b>{runtimeResponse}</b></div>
               <div className="runtime-list"><p><i>01</i>Building systems</p><p><i>02</i>Training AI</p><p><i>03</i>Solving problems</p></div>
               <div className="runtime-signal"><span>SYSTEM HEALTH</span><b><i />NOMINAL</b></div>
             </div>
@@ -270,7 +292,7 @@ export default function Home() {
             <aside className="system-profile">
               <div className="panel-topline"><span><i />SYSTEM.INFO</span><span>PROFILE_01</span></div>
               <dl>
-                <div><dt>NAME</dt><dd>Raihan</dd></div><div><dt>ROLE</dt><dd>Software Engineer</dd></div><div><dt>FOCUS</dt><dd>Software / AI</dd></div><div><dt>STACK</dt><dd>Full Stack</dd></div><div><dt>STATUS</dt><dd className="online"><i />AVAILABLE</dd></div>
+                <div><dt>NAME</dt><dd>Raihan Muhammad Rafi</dd></div><div><dt>ROLE</dt><dd>Software Engineer</dd></div><div><dt>FOCUS</dt><dd>Software / AI</dd></div><div><dt>STACK</dt><dd>Full Stack</dd></div><div><dt>STATUS</dt><dd className="online"><i />AVAILABLE</dd></div>
               </dl>
               <div className="profile-trace"><span>0x0A</span><i /><span>0xF2</span></div>
             </aside>
@@ -328,11 +350,11 @@ export default function Home() {
         <section className="section-shell contact-section" id="contact" aria-labelledby="contact-heading">
           <div className="contact-line" aria-hidden="true"><i /><span>CONNECTION</span><i /></div>
           <SectionHeading index="05" eyebrow="OPEN CHANNEL" title="LET'S BUILD SOMETHING." />
-          <div className="contact-layout"><div><p>Have an idea, project, or technical challenge? Let’s build it.</p><a className="button button-primary" href="https://github.com/rafiraihan09" target="_blank" rel="noreferrer">INITIALIZE CONNECTION <ArrowUpRight size={17} /></a></div><aside className="connection-panel"><div className="panel-topline"><span><i />CONNECTION STATUS</span><span>PORT 443</span></div><div className="connection-ready"><span><i />READY</span><b>SECURE CHANNEL AVAILABLE</b></div><div className="connection-links"><a href="https://github.com/rafiraihan09" target="_blank" rel="noreferrer"><Github size={16} />GITHUB<ArrowUpRight size={15} /></a><span><Send size={16} />EMAIL <em>ON REQUEST</em></span><span><Network size={16} />LINKEDIN <em>ON REQUEST</em></span></div></aside></div>
+          <div className="contact-layout"><div><p>Have an idea, project, or technical challenge? Let’s build it.</p><a className="button button-primary" href="mailto:raihanrafi065@gmail.com">INITIALIZE CONNECTION <ArrowUpRight size={17} /></a></div><aside className="connection-panel"><div className="panel-topline"><span><i />CONNECTION STATUS</span><span>PORT 443</span></div><div className="connection-ready"><span><i />READY</span><b>SECURE CHANNEL AVAILABLE</b></div><div className="connection-links"><a href="https://github.com/rafiraihan09" target="_blank" rel="noreferrer"><Github size={16} />GITHUB<ArrowUpRight size={15} /></a><a className="email-link" href="mailto:raihanrafi065@gmail.com"><Send size={16} />raihanrafi065@gmail.com</a><a href="https://www.linkedin.com/in/raihan-muhammad-rafi-09a785284/" target="_blank" rel="noreferrer"><Network size={16} />LINKEDIN<ArrowUpRight size={15} /></a></div></aside></div>
         </section>
       </main>
 
-      <footer className="site-footer"><a className="brand" href="#top"><img src={logoUrl} alt="" /><span>RAIHAN<span>//</span></span></a><p>SOFTWARE ENGINEER <i>//</i> © 2026</p><a href="https://github.com/rafiraihan09" target="_blank" rel="noreferrer">GITHUB <ArrowUpRight size={14} /></a></footer>
+      <footer className="site-footer"><a className="brand" href="#top"><img src={logoUrl} alt="" /><span>Raihan Muhammad Rafi<span>//</span></span></a><p>SOFTWARE ENGINEER <i>//</i> © 2026</p><a href="https://github.com/rafiraihan09" target="_blank" rel="noreferrer">GITHUB <ArrowUpRight size={14} /></a></footer>
     </div>
   );
 }
